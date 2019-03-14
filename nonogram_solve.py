@@ -2,7 +2,6 @@ import math
 import time
 
 def nonogram_solve():
-	dimxdimxdim=raw_input("Enter puzzle dimension, col x row x colors, e.g. 8x4x3  ")
 	dims = dimxdimxdim.split("x")
 	num_cols = int(dims[0])
 	num_rows = int(dims[1])
@@ -24,7 +23,6 @@ def nonogram_solve():
 	total_start_time=time.time()
 
 	colors=checkinputs(flatrows,flatcols)
-	
 	print(rows)
 	print(cols)
 	print(colors)
@@ -116,7 +114,6 @@ def nonogram_solve():
 		if solved:
 			dummy="stop"
 		elif count>=count_to:		
-			change_dummy=raw_input("enter STOP to stop  ")
 			if change_dummy=="STOP":dummy="stop"
 		count+=1		
 		iter_end=time.time()
@@ -131,7 +128,6 @@ def nonogram_solve():
 	total_elapsed=total_end_time-total_start_time
 	print (iteration_times)
 	print (str(total_elapsed)+" seconds total")
-
 
 def check_inputs(flatcols,flatrows,colors):
 	for c in flatcols:
@@ -460,9 +456,7 @@ def read_rows(num_rows,skipcode,earlycode,row_or_col):
 	rows=[]
 	flatrows=[]
 	for r in range(num_rows):
-		row=raw_input("Enter "+row_or_col+", e.g. 1g 3g 1h 2g  ")
 		if row==skipcode:
-			row=raw_input("Enter "+row_or_col+", e.g. 1g 3g 1h 2g  ")
 		if row==earlycode:
 			print("input error:  not enough "+row_or_col+"s")
 		row_parse=row.split(" ")
@@ -663,12 +657,10 @@ def careful_rowcheck(truegrid,spacelist,rows,possibles_c=[],colors=[],toobig=250
 				truegrid[r]=newtrue	
 	return [truegrid,spacelist]
 
-	
 def choose(n,r):
 	choose=1
 	if n>r:
 		choose=math.factorial(n)/(math.factorial(n-r)*math.factorial(r))
 	return choose
-	
 nonogram_solve()
 
