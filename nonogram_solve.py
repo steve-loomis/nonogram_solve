@@ -2,6 +2,7 @@ import math
 import time
 
 def nonogram_solve():
+	dimxdimxdim=input("Enter puzzle dimension, col x row x colors, e.g. 8x4x3  ")
 	dims = dimxdimxdim.split("x")
 	num_cols = int(dims[0])
 	num_rows = int(dims[1])
@@ -20,9 +21,12 @@ def nonogram_solve():
 	cols=cols_flatcols[0]
 	flatcols=cols_flatcols[1]
 
+
+
 	total_start_time=time.time()
 
 	colors=checkinputs(flatrows,flatcols)
+
 	print(rows)
 	print(cols)
 	print(colors)
@@ -114,13 +118,14 @@ def nonogram_solve():
 		if solved:
 			dummy="stop"
 		elif count>=count_to:		
+			change_dummy=input("enter STOP to stop  ")
 			if change_dummy=="STOP":dummy="stop"
 		count+=1		
 		iter_end=time.time()
 		iter_elapsed=iter_end-iter_start
 		print(str(iter_elapsed)+" secs this iteration")
 		iteration_times.append(iter_elapsed)
-	
+
 	print(rows)
 	print(cols)
 	print(truegrid)
@@ -456,10 +461,14 @@ def read_rows(num_rows,skipcode,earlycode,row_or_col):
 	rows=[]
 	flatrows=[]
 	for r in range(num_rows):
+		row=input("Enter "+row_or_col+", e.g. 1g 3g 1h 2g  ")
 		if row==skipcode:
+			row=input("Enter "+row_or_col+", e.g. 1g 3g 1h 2g  ")
 		if row==earlycode:
 			print("input error:  not enough "+row_or_col+"s")
 		row_parse=row.split(" ")
+		rightmost=row_parse[0][len(row_parse[0])-1:len(row_parse[0])]
+		if rightmost.isdigit():row_parse = [i+'x' for i in row_parse]
 		rows.append(row_parse)
 		for r2 in range(len(row_parse)):
 			flatrows.append(row_parse[r2])
@@ -662,5 +671,40 @@ def choose(n,r):
 	if n>r:
 		choose=math.factorial(n)/(math.factorial(n-r)*math.factorial(r))
 	return choose
+
+def careful_spacelist(rows,num_cols,spacelist,toobig):
+	num_rows=len(rows)
+	for r in range(num_rows):
+		if (len(spacelist)<=r or spacelist[r][0]=="skip"):
+			start_time=time.time()
+			row=rows[r]
+			##tgrow=truegrid[r]
+			## build space list
+			blocks=len(row)
+			blocksum=0
+			same_color_dividers=0
+			last_color='.'
+			## this could use some explicit zero row handling
+			for ic in row:
+				lic=len(ic)
+				i=int(ic[0:lic-1])
+				c=ic[lic-1:]
+				blocksum+=i
+				if c==last_color: same_color_dividers+=1
+				last_color=c
+			spaces=num_cols-(blocksum+same_color_dividers)
+			calced=choose(spaces+blocks,spaces)
+			print(calced)
+			if calced<toobig:
+				spacelist.append(space_recurse(spaces+1,blocks-1))
+			else:
+				spacelist.append(["skip",calced])
+			end_time=time.time()
+			elapsed=end_time-start_time
+			print(str(len(spacelist[r])) + "   " + str(elapsed) + " sec")
+		
+		## space list is built.
+	return spacelist
+
 nonogram_solve()
 
