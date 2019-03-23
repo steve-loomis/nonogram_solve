@@ -1,7 +1,28 @@
+import sys, getopt
 import math
 import time
 
-def nonogram_solve():
+
+def main(argv):
+	# check for command line argument
+	inputfile = ''
+	outputfile = ''
+	try:
+		opts, args = getopt.getopt(argv,"hi:o:",["ifile=","ofile="])
+	except getopt.GetoptError:
+		print('nonogram_solve.py -i <inputfile> -o <outputfile>')
+		sys.exit(2)
+	for opt, arg in opts:
+		if opt == '-h':
+			 print('nonogram_solve.py -i <inputfile> -o <outputfile>')
+			 sys.exit()
+		elif opt in ("-i", "--ifile"):
+			inputfile = arg
+		elif opt in ("-o", "--ofile"):
+			outputfile = arg
+	print(f'Input file is {inputfile}')
+	print(f'Output file is {outputfile}')
+
 	dimxdimxdim=input("Enter puzzle dimension, col x row x colors, e.g. 8x4x3  ")
 	dims = dimxdimxdim.split("x")
 	num_cols = int(dims[0])
@@ -706,5 +727,6 @@ def careful_spacelist(rows,num_cols,spacelist,toobig):
 		## space list is built.
 	return spacelist
 
-nonogram_solve()
-
+#nonogram_solve()
+if __name__ == "__main__":
+   main(sys.argv[1:])
