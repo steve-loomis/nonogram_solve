@@ -23,7 +23,14 @@ def main(argv):
 	print(f'Input file is {inputfile}')
 	print(f'Output file is {outputfile}')
 
-	dimxdimxdim=input("Enter puzzle dimension, col x row x colors, e.g. 8x4x3  ")
+	if inputfile=='':
+		dimxdimxdim=input("Enter puzzle dimension, col x row x colors, e.g. 8x4x3  ")
+		ifile="no file"
+	else:
+		with open(inputfile) as f:
+			ifile = f.readlines()   ### appropriate for very small files, which is what we expect
+			ifile = [x.strip() for x in ifile]
+			dimxdimxdim=ifile.pop(0)
 	dims = dimxdimxdim.split("x")
 	num_cols = int(dims[0])
 	num_rows = int(dims[1])
@@ -34,11 +41,11 @@ def main(argv):
 	flatrows=[]
 	iteration_times=[]
 
-	rows_flatrows=read_rows(num_rows,"horiz","vert","row")
+	rows_flatrows=read_rows(num_rows,"horiz","vert","row",ifile)
 	rows=rows_flatrows[0]
 	flatrows=rows_flatrows[1]
 
-	cols_flatcols=read_rows(num_cols,"vert","","col")
+	cols_flatcols=read_rows(num_cols,"vert","","col",ifile)
 	cols=cols_flatcols[0]
 	flatcols=cols_flatcols[1]
 
@@ -478,15 +485,19 @@ def build_spacelist(rows,num_cols):
 		## space list is built.
 	return spacelist
 
-def read_rows(num_rows,skipcode,earlycode,row_or_col):
+def read_rows(num_rows,skipcode,earlycode,row_or_col,inputfile_as_list):
 	rows=[]
 	flatrows=[]
 	for r in range(num_rows):
-		row=input("Enter "+row_or_col+", e.g. 1g 3g 1h 2g  ")
-		if row==skipcode:
+		if inputfile_as_list=="no file":
 			row=input("Enter "+row_or_col+", e.g. 1g 3g 1h 2g  ")
-		if row==earlycode:
-			print("input error:  not enough "+row_or_col+"s")
+			if row==skipcode:
+				row=input("Enter "+row_or_col+", e.g. 1g 3g 1h 2g  ")
+			if row==earlycode:
+				print("input error:  not enough "+row_or_col+"s")
+		else:
+			row=inputfile_as_list.pop(0)
+			if row==skipcode or row==earlycode:row=inputfile_as_list.pop(0)
 		row_parse=row.split(" ")
 		rightmost=row_parse[0][len(row_parse[0])-1:len(row_parse[0])]
 		if rightmost.isdigit():row_parse = [i+'x' for i in row_parse]
